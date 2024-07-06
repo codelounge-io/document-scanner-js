@@ -3,3 +3,10 @@
 /workspace.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+/vcs.xml
+.idea/
+/.idea/
+
+.DS_Store
+/src/.DS_Store
+/src/js/.DS_Store
