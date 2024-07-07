@@ -9,11 +9,6 @@ class DocumentScanner {
         this.images = [];
         this.isDragging = false;
         this.dragCorner = null;
-        this.modalTitle = options.modalTitle || 'Document Scanner';
-        this.scanDocumentBtnText = options.scanDocumentBtnText || 'Scan Document';
-        this.okBtnText = options.okBtnText || 'OK';
-        this.saveBtnText = options.saveBtnText || 'Save Scan';
-        this.addAnotherPageBtnText = options.addAnotherPageBtnText || 'Add another page';
 
         this.styleFileInput();
         this.initHTML();
@@ -28,7 +23,7 @@ class DocumentScanner {
         this.element.style.display = 'none';
 
         this.buttonLabel = document.createElement('label');
-        this.buttonLabel.innerHTML = this.scanDocumentBtnText;
+        this.buttonLabel.innerHTML = 'Scan Document';
         this.buttonLabel.setAttribute('for', this.element.id);
         this.buttonLabel.style.display = 'inline-block';
         this.buttonLabel.style.padding = '10px 20px';
@@ -75,7 +70,7 @@ class DocumentScanner {
                         <div id="bottomRightCorner" class="corner"><div class="corner-inside"></div></div>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
-                        <button type="button" id="okBtn" class="btn btn-success hidden">${this.okBtnText}</button>
+                        <button type="button" id="okBtn" class="btn btn-success hidden">OK</button>
                     </div>
                 </div>
             </div>
@@ -86,8 +81,8 @@ class DocumentScanner {
             </div>
             <div class="row mb-3">
                 <div class="col-xs-12 d-flex justify-content-between">
-                    <button type="button" id="addPageBtn" class="btn btn-primary hidden">${this.addAnotherPageBtnText}</button>
-                    <button type="button" id="saveBtn" class="btn btn-secondary hidden">${this.saveBtnText}</button>
+                    <button type="button" id="addPageBtn" class="btn btn-primary hidden">Add Another Page</button>
+                    <button type="button" id="saveBtn" class="btn btn-secondary hidden">Save Scan</button>
                 </div>
             </div>
         `;
@@ -131,10 +126,8 @@ class DocumentScanner {
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="scannerModalLabel">${this.modalTitle}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <h5 class="modal-title" id="scannerModalLabel">Document Scanner</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body"></div>
                 </div>
@@ -143,6 +136,12 @@ class DocumentScanner {
         document.body.appendChild(this.modal);
         this.modalBody = this.modal.querySelector('.modal-body');
         this.modalBody.appendChild(this.scannerUI);
+
+        const buttonLabel = this.buttonLabel;
+        this.buttonLabel.addEventListener('click', () => {
+            const modal = new bootstrap.Modal(this.modal);
+            modal.show();
+        });
     }
 
     initServiceWorker() {
@@ -185,18 +184,11 @@ class DocumentScanner {
 
     addEventListeners() {
         this.element.addEventListener("change", this.handleImageInput.bind(this));
-        this.buttonLabel.addEventListener("click", this.handleButtonClick.bind(this));
         this.okBtn.addEventListener("click", this.handleOkClick.bind(this));
         this.addPageBtn.addEventListener("click", this.handleAddPageClick.bind(this));
         this.saveBtn.addEventListener("click", this.handleSaveClick.bind(this));
         for (let corner in this.cornerElements) {
             this.cornerElements[corner].addEventListener('pointerdown', this.onPointerDown(corner).bind(this));
-        }
-    }
-
-    handleButtonClick() {
-        if (this.mode === 'modal') {
-            $('#' + this.modal.id).modal('show');
         }
     }
 
@@ -237,7 +229,8 @@ class DocumentScanner {
                     this.scannerUI.querySelector("#highlightViewContainer").classList.remove('hidden');
                     this.okBtn.classList.remove('hidden');
                     this.scannerUI.querySelector("#adjustViewContainer").classList.remove('hidden');
-                    setTimeout(this.updateCornerElements.bind(this), 100);            };
+                    setTimeout(this.updateCornerElements.bind(this), 100);
+                };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
@@ -284,7 +277,8 @@ class DocumentScanner {
 
         this.hideLoader();
         if (this.mode === 'modal') {
-            $('#' + this.modal.id).modal('hide');
+            const modal = bootstrap.Modal.getInstance(this.modal);
+            modal.hide();
         }
     }
 
